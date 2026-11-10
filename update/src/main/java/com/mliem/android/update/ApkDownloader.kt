@@ -33,7 +33,11 @@ internal class ApkDownloader(
 
         val digest = MessageDigest.getInstance("SHA-256")
         try {
-            val request = Request.Builder().url(url).build()
+            val request = Request.Builder()
+                .url(url)
+                // Hash the bytes GitHub stored, not a gzip-decoded copy.
+                .header("Accept-Encoding", "identity")
+                .build()
             http.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
                     throw UpdateException("${config.messages.installFailed} (HTTP ${response.code})")
