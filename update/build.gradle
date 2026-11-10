@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.library'
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+android {
+    namespace 'com.mliem.android.update'
+    compileSdk 37
+
+    defaultConfig {
+        minSdk 26
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+}
+
+dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:5.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20240303'
+}
