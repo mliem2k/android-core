@@ -23,7 +23,7 @@ internal class ApkDownloader(
 ) {
     fun download(info: UpdateInfo): File {
         val url = info.apkUrl ?: throw UpdateException(config.messages.noApk)
-        if (!url.startsWith("https://")) throw UpdateException(config.messages.insecure)
+        if (!UpdateSecurity.isTrustedUrl(url)) throw UpdateException(config.messages.insecure)
 
         val directory = File(context.cacheDir, "updates").apply { mkdirs() }
         val target = File(directory, "update.apk")
@@ -66,7 +66,7 @@ internal class ApkDownloader(
             val actual = digest.digest().joinToString("") { "%02x".format(it) }
             when (val expected = info.sha256) {
                 null -> if (config.requireDigest) throw UpdateException(config.messages.digestMissing)
-                else -> if (!actual.equals(expected, ignoreCase = true)) {
+                else -> if (!UpdateSecurity.checksumMatches(actual, expected)) {
                     throw UpdateException(config.messages.checksum)
                 }
             }
