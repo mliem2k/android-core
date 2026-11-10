@@ -56,6 +56,14 @@ class ReleaseParserTest {
     }
 
     @Test
+    fun aNullDigestIsMissingNotTheWordNull() {
+        val json = """[{"tag_name":"nightly-20261105-1781592400","assets":[
+            {"name":"a.apk","size":5,"digest":null,"browser_download_url":"https://x/a.apk"}]}]"""
+        assertNull(ReleaseParser.parse(json, AppVersion("build 1", 100), channels, true))
+        assertNull(ReleaseParser.parse(json, AppVersion("build 1", 100), channels, false)!!.sha256)
+    }
+
+    @Test
     fun legacyUnderscoreTagsStillUpdate() {
         val json = """[{"tag_name":"nightly_20261105_1781592400","assets":[
             {"name":"a.apk","browser_download_url":"https://x/a.apk","digest":"sha256:a"}]}]"""

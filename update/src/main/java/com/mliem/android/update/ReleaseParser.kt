@@ -58,13 +58,17 @@ object ReleaseParser {
                     it.optString("browser_download_url").startsWith("https://")
             } ?: return null
 
-        val digest = asset.optString("digest")
-            .removePrefix("sha256:")
-            .lowercase()
-            .ifBlank { null }
+        val digest = if (asset.isNull("digest")) {
+            null
+        } else {
+            asset.optString("digest")
+                .removePrefix("sha256:")
+                .lowercase()
+                .ifBlank { null }
+        }
         if (requireDigest && digest == null) return null
 
-        val body = release.optString("body")
+        val body = if (release.isNull("body")) "" else release.optString("body")
         val versionLabel = when (tag.channel) {
             Channel.STABLE -> tag.version.toString()
             Channel.NIGHTLY -> nightlyVersionLabel(body) ?: tagText
